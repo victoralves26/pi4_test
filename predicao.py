@@ -16,14 +16,20 @@ st.markdown("Este painel utiliza modelos preditivos de séries temporais para pr
 
 # Parâmetros GARCH(1,1) estimados
 garch_params = {
-    "BTCUSDT": {"omega": 0.116832, "alpha": 0.043909, "beta": 0.932001, "mu": 0.141378},
-    "ETHUSDT": {"omega": 7.859079, "alpha": 0.061944, "beta": 0.444161, "mu": 0.219644},
-    "SOLUSDT": {"omega": 3.990503, "alpha": 0.078300, "beta": 0.730698, "mu": 0.166247}
+    "Bitcoin": {"omega": 0.116832, "alpha": 0.043909, "beta": 0.932001, "mu": 0.141378},
+    "Ethereum": {"omega": 7.859079, "alpha": 0.061944, "beta": 0.444161, "mu": 0.219644},
+    "Solana": {"omega": 3.990503, "alpha": 0.078300, "beta": 0.730698, "mu": 0.166247}
+}
+
+# Mapeamento para símbolos
+symbol_map = {
+    "Bitcoin": "BTCUSDT", 
+    "Ethereum": "ETHUSDT", 
+    "Solana": "SOLUSDT"
 }
 
 # Seleção de moeda
-coin = st.selectbox("Escolha a moeda para prever:", ["bitcoin", "ethereum", "solana"])
-symbol_map = {"bitcoin": "BTCUSDT", "ethereum": "ETHUSDT", "solana": "SOLUSDT"}
+coin = st.selectbox("Escolha a moeda para prever:", ["Bitcoin", "Ethereum", "Solana"])
 symbol = symbol_map[coin]
 
 # Verificar se arquivo existe
@@ -66,8 +72,12 @@ try:
     last_returns = df['retornos'].iloc[-30:]
     last_volatility = np.var(last_returns)
 
+    # Calcular médias móveis dos últimos 7 e 15 dias
+    mm_7_dias = df['preco'].tail(7).mean()
+    mm_15_dias = df['preco'].tail(15).mean()
+
     # Executar simulação
-    params = garch_params[symbol]
+    params = garch_params[coin]
     simulations = simulate_garch(params, last_price, last_volatility)
     mean_predictions = np.mean(simulations, axis=0)
 
@@ -80,7 +90,7 @@ try:
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(historical_dates, historical_prices, label='Histórico Completo', color='blue', linewidth=1.5)
     ax.plot(future_dates, mean_predictions, label='Previsão (Próximos 7 dias)', color='red', linewidth=2, marker='o')
-    ax.set_title(f"{coin.capitalize()} ({symbol}) - Previsão de Preços", fontsize=14, fontweight='bold')
+    ax.set_title(f"{coin} - Previsão de Preços", fontsize=14, fontweight='bold')
     ax.set_xlabel("Data")
     ax.set_ylabel("Preço (USD)")
     ax.grid(True, alpha=0.3)
@@ -92,7 +102,7 @@ try:
     # ----------------------------
     # KPIs Atualizados
     # ----------------------------
-    st.subheader("📊 Previsões para os Próximos Dias")
+    st.subheader("📊 Indicadores Atuais")
     
     # Função para formatar preços com separadores
     def format_price(price):
@@ -105,43 +115,14 @@ try:
             format_price(last_price)
         )
     with col2:
-        change_1d = ((mean_predictions[0] - last_price) / last_price) * 100
         st.metric(
-            f"Previsão 1º Dia ({future_dates[0].strftime('%d/%m/%Y')})", 
-            format_price(mean_predictions[0]), 
-            f"{change_1d:+.2f}%"
+            "Média Móvel (7 dias)", 
+            format_price(mm_7_dias)
         )
     with col3:
-        change_2d = ((mean_predictions[1] - last_price) / last_price) * 100
         st.metric(
-            f"Previsão 2º Dia ({future_dates[1].strftime('%d/%m/%Y')})", 
-            format_price(mean_predictions[1]), 
-            f"{change_2d:+.2f}%"
-        )
-
-    # Segunda linha de KPIs
-    col4, col5, col6 = st.columns(3)
-    with col4:
-        change_3d = ((mean_predictions[2] - last_price) / last_price) * 100
-        st.metric(
-            f"Previsão 3º Dia ({future_dates[2].strftime('%d/%m/%Y')})", 
-            format_price(mean_predictions[2]), 
-            f"{change_3d:+.2f}%"
-        )
-    with col5:
-        change_7d = ((mean_predictions[-1] - last_price) / last_price) * 100
-        st.metric(
-            f"Previsão 7º Dia ({future_dates[-1].strftime('%d/%m/%Y')})", 
-            format_price(mean_predictions[-1]), 
-            f"{change_7d:+.2f}%"
-        )
-    with col6:
-        # Variação total no período
-        total_change = ((mean_predictions[-1] - last_price) / last_price) * 100
-        st.metric(
-            "Variação no Período", 
-            f"{total_change:+.2f}%",
-            f"De {format_price(last_price)} para {format_price(mean_predictions[-1])}"
+            "Média Móvel (15 dias)", 
+            format_price(mm_15_dias)
         )
 
     # ----------------------------
@@ -226,7 +207,7 @@ try:
     # ----------------------------
     # Tabela de Sugestões Formatada
     # ----------------------------
-    st.subheader(f"📊 Tabela de Sugestão para {symbol}")
+    st.subheader(f"📊 Tabela de Sugestão para {coin}")
 
     if not suggestion_table.empty:
         # Formatar a tabela para exibição

@@ -184,38 +184,6 @@ try:
         )
 
     # ----------------------------
-    # SEÇÃO "VOCÊ SABIA?"
-    # ----------------------------
-    st.subheader("💡 Você sabia?")
-    
-    with st.expander("📈 Entenda as Médias Móveis", expanded=True):
-        st.markdown("""
-        **Médias Móveis são ferramentas essenciais para análise técnica!**
-        
-        ### 🎯 **Média Móvel de 3 dias**
-        - **O que é**: Média dos últimos 3 dias de preços
-        - **Para que serve**: Identifica a tendência **muito curto prazo**
-        - **Como usar**: Reage rapidamente a mudanças recentes de preço
-        - **Indica**: Movimentos imediatos do mercado
-        
-        ### 📊 **Média Móvel de 7 dias**  
-        - **O que é**: Média dos últimos 7 dias de preços (uma semana)
-        - **Para que serve**: Mostra a tendência de **curto prazo**
-        - **Como usar**: Filtra o "ruído" diário e mostra a direção da semana
-        - **Indica**: Força da tendência atual
-        
-        ### 📈 **Média Móvel de 15 dias**
-        - **O que é**: Média dos últimos 15 dias de preços (três semanas)
-        - **Para que serve**: Revela a tendência de **médio prazo**
-        - **Como usar**: Confirma se a tendência é consistente
-        - **Indica**: Direção principal do mercado
-        
-        ### 💡 **Dica do Investidor**:
-        - Quando a média de **curto prazo** está acima da de **médio prazo**, geralmente indica **tendência de alta** 📈
-        - Quando a média de **curto prazo** está abaixo da de **médio prazo**, geralmente indica **tendência de baixa** 📉
-        """)
-
-    # ----------------------------
     # TABELA DE SUGESTÕES
     # ----------------------------
     def calculate_moving_averages_and_suggestions(historical_prices, future_prices, historical_dates, future_dates):
@@ -323,6 +291,38 @@ try:
         - **⚪ Manter - Aguardar Confirmação**: Mercado sem direção clara → **Melhor esperar**
         
         💡 **Lembre-se**: Estas são ferramentas de apoio. Sempre faça sua própria análise!
+        """)
+
+    # ----------------------------
+    # SEÇÃO "VOCÊ SABIA?" - AGORA NO FINAL
+    # ----------------------------
+    st.subheader("💡 Você sabia?")
+    
+    with st.expander("📈 Entenda as Médias Móveis", expanded=False):
+        st.markdown("""
+        **Médias Móveis são ferramentas essenciais para análise técnica!**
+        
+        ### 🎯 **Média Móvel de 3 dias**
+        - **O que é**: Média dos últimos 3 dias de preços
+        - **Para que serve**: Identifica a tendência **muito curto prazo**
+        - **Como usar**: Reage rapidamente a mudanças recentes de preço
+        - **Indica**: Movimentos imediatos do mercado
+        
+        ### 📊 **Média Móvel de 7 dias**  
+        - **O que é**: Média dos últimos 7 dias de preços (uma semana)
+        - **Para que serve**: Mostra a tendência de **curto prazo**
+        - **Como usar**: Filtra o "ruído" diário e mostra a direção da semana
+        - **Indica**: Força da tendência atual
+        
+        ### 📈 **Média Móvel de 15 dias**
+        - **O que é**: Média dos últimos 15 dias de preços (três semanas)
+        - **Para que serve**: Revela a tendência de **médio prazo**
+        - **Como usar**: Confirma se a tendência é consistente
+        - **Indica**: Direção principal do mercado
+        
+        ### 💡 **Dica do Investidor**:
+        - Quando a média de **curto prazo** está acima da de **médio prazo**, geralmente indica **tendência de alta** 📈
+        - Quando a média de **curto prazo** está abaixo da de **médio prazo**, geralmente indica **tendência de baixa** 📉
         """)
 
 except Exception as e:

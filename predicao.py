@@ -54,14 +54,13 @@ try:
     df = df.dropna()
 
     # ----------------------------
-    # SIMULAÇÃO GARCH MELHORADA (igual ao Colab)
+    # SIMULAÇÃO GARCH MELHORADA
     # ----------------------------
     
     def plot_garch_price_projection(historical_series, forecast_days, historical_returns_mean, 
                                   predicted_volatility, crypto_name, num_simulations=100):
         """
         Função para plotar projeções de preços usando simulações GARCH
-        Similar à função usada no Colab
         """
         # Último preço histórico
         last_price = historical_series['preco'].iloc[-1]
@@ -95,7 +94,6 @@ try:
         
         # Calcular estatísticas
         mean_predictions = np.mean(simulations, axis=0)
-        median_predictions = np.median(simulations, axis=0)
         confidence_upper = np.percentile(simulations, 95, axis=0)
         confidence_lower = np.percentile(simulations, 5, axis=0)
         
@@ -103,37 +101,23 @@ try:
         historical_dates = historical_series['data']
         future_dates = [last_date + timedelta(days=i+1) for i in range(forecast_days)]
         
-        # Criar figura
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 10))
+        # Criar figura - APENAS UM GRÁFICO
+        fig, ax = plt.subplots(figsize=(14, 6))
         
-        # Gráfico 1: Histórico + Previsão com intervalo de confiança
-        ax1.plot(historical_dates, historical_series['preco'], 
+        # Gráfico: Histórico + Previsão com intervalo de confiança
+        ax.plot(historical_dates, historical_series['preco'], 
                 label='Histórico', color='blue', linewidth=2, alpha=0.8)
-        ax1.plot(future_dates, mean_predictions, 
+        ax.plot(future_dates, mean_predictions, 
                 label='Previsão Média', color='red', linewidth=3, marker='o')
-        ax1.fill_between(future_dates, confidence_lower, confidence_upper, 
+        ax.fill_between(future_dates, confidence_lower, confidence_upper, 
                         alpha=0.3, color='red', label='Intervalo 90% Confiança')
         
-        ax1.set_title(f'{crypto_name} - Projeção de Preços (GARCH)', fontsize=16, fontweight='bold')
-        ax1.set_xlabel('Data')
-        ax1.set_ylabel('Preço (USD)')
-        ax1.legend()
-        ax1.grid(True, alpha=0.3)
-        ax1.tick_params(axis='x', rotation=45)
-        
-        # Gráfico 2: Simulações individuais
-        for i in range(min(20, num_simulations)):  # Plotar apenas 20 simulações para clareza
-            ax2.plot(future_dates, simulations[i], alpha=0.1, color='gray', linewidth=0.5)
-        
-        ax2.plot(future_dates, mean_predictions, label='Média', color='red', linewidth=2)
-        ax2.plot(future_dates, median_predictions, label='Mediana', color='green', linewidth=2, linestyle='--')
-        
-        ax2.set_title(f'{crypto_name} - Simulações de Monte Carlo', fontsize=14, fontweight='bold')
-        ax2.set_xlabel('Data')
-        ax2.set_ylabel('Preço (USD)')
-        ax2.legend()
-        ax2.grid(True, alpha=0.3)
-        ax2.tick_params(axis='x', rotation=45)
+        ax.set_title(f'{crypto_name} - Projeção de Preços (GARCH)', fontsize=16, fontweight='bold')
+        ax.set_xlabel('Data')
+        ax.set_ylabel('Preço (USD)')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+        ax.tick_params(axis='x', rotation=45)
         
         plt.tight_layout()
         return fig, mean_predictions, future_dates
@@ -142,21 +126,20 @@ try:
     # EXECUTAR SIMULAÇÃO GARCH
     # ----------------------------
     
-    # Parâmetros para a simulação (baseados nos resultados do Colab)
+    # Parâmetros para a simulação
     dias_previsao_garch = 7
     
     # Calcular estatísticas dos retornos
     retornos_series = df['retornos'].dropna()
     historical_returns_mean = retornos_series.mean()
     
-    # Estimar volatilidade prevista (simulando o output do modelo GARCH)
-    # Na prática, isso viria do modelo GARCH ajustado
+    # Estimar volatilidade prevista
     volatilidade_base = retornos_series.var()
     
     # Simular volatilidade prevista (decaindo suavemente)
     predicted_volatility = [volatilidade_base * (0.95 ** i) for i in range(dias_previsao_garch)]
     
-    # Gerar gráficos de projeção
+    # Gerar gráfico de projeção
     fig, mean_predictions, future_dates = plot_garch_price_projection(
         historical_series=df,
         forecast_days=dias_previsao_garch,

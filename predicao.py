@@ -184,6 +184,38 @@ try:
         )
 
     # ----------------------------
+    # SEÇÃO "VOCÊ SABIA?"
+    # ----------------------------
+    st.subheader("💡 Você sabia?")
+    
+    with st.expander("📈 Entenda as Médias Móveis", expanded=True):
+        st.markdown("""
+        **Médias Móveis são ferramentas essenciais para análise técnica!**
+        
+        ### 🎯 **Média Móvel de 3 dias**
+        - **O que é**: Média dos últimos 3 dias de preços
+        - **Para que serve**: Identifica a tendência **muito curto prazo**
+        - **Como usar**: Reage rapidamente a mudanças recentes de preço
+        - **Indica**: Movimentos imediatos do mercado
+        
+        ### 📊 **Média Móvel de 7 dias**  
+        - **O que é**: Média dos últimos 7 dias de preços (uma semana)
+        - **Para que serve**: Mostra a tendência de **curto prazo**
+        - **Como usar**: Filtra o "ruído" diário e mostra a direção da semana
+        - **Indica**: Força da tendência atual
+        
+        ### 📈 **Média Móvel de 15 dias**
+        - **O que é**: Média dos últimos 15 dias de preços (três semanas)
+        - **Para que serve**: Revela a tendência de **médio prazo**
+        - **Como usar**: Confirma se a tendência é consistente
+        - **Indica**: Direção principal do mercado
+        
+        ### 💡 **Dica do Investidor**:
+        - Quando a média de **curto prazo** está acima da de **médio prazo**, geralmente indica **tendência de alta** 📈
+        - Quando a média de **curto prazo** está abaixo da de **médio prazo**, geralmente indica **tendência de baixa** 📉
+        """)
+
+    # ----------------------------
     # TABELA DE SUGESTÕES
     # ----------------------------
     def calculate_moving_averages_and_suggestions(historical_prices, future_prices, historical_dates, future_dates):
@@ -223,29 +255,22 @@ try:
             mm7 = result_df['MM_7_dias'].iloc[i]
             mm15 = result_df['MM_15_dias'].iloc[i]
             
-            # Lógica de sugestão baseada em cruzamentos
+            # Lógica de sugestão SIMPLIFICADA e mais clara
             if mm3 > mm7 and mm3 > mm15:
-                if current_price > mm3:
-                    suggestions.append('Compra Forte')
-                else:
-                    suggestions.append('Compra (Tendência Curta)')
+                # Tendência de alta em todos os prazos
+                suggestions.append('📈 Compra - Tendência Forte')
             elif mm3 < mm7 and mm3 < mm15:
-                if current_price < mm3:
-                    suggestions.append('Venda Forte')
-                else:
-                    suggestions.append('Venda (Tendência Curta)')
-            elif mm7 > mm3 and mm7 > mm15:
-                suggestions.append('Manter/Positivo')
-            elif mm7 < mm3 and mm7 < mm15:
-                suggestions.append('Manter/Negativo')
+                # Tendência de baixa em todos os prazos
+                suggestions.append('📉 Venda - Tendência de Baixa')
+            elif mm3 > mm7:
+                # Curto prazo acima do médio prazo
+                suggestions.append('🟢 Compra - Tendência Positiva')
+            elif mm3 < mm7:
+                # Curto prazo abaixo do médio prazo
+                suggestions.append('🔴 Venda - Tendência Negativa')
             else:
-                if abs(mm3 - mm7) < (mm3 * 0.01):
-                    if current_price > mm15:
-                        suggestions.append('Manter/Otimista')
-                    else:
-                        suggestions.append('Manter/Cauteloso')
-                else:
-                    suggestions.append('Manter/Indefinido')
+                # Mercado lateral/indefinido
+                suggestions.append('⚪ Manter - Aguardar Confirmação')
         
         result_df['Sugestão'] = suggestions
         
@@ -287,18 +312,17 @@ try:
         st.dataframe(display_table[['Data', 'Preço', 'MM 3 dias', 'MM 7 dias', 'MM 15 dias', 'Sugestão']], 
                     hide_index=True)
 
-        # Legenda das Sugestões
+        # Legenda das Sugestões - MAIS CLARA E DIDÁTICA
         st.markdown("""
-        **📋 Legenda das Sugestões:**
-        - **Compra Forte**: Tendência claramente positiva em múltiplos prazos
-        - **Compra (Tendência Curta)**: Tendência positiva no curto prazo
-        - **Venda Forte**: Tendência claramente negativa em múltiplos prazos  
-        - **Venda (Tendência Curta)**: Tendência negativa no curto prazo
-        - **Manter/Positivo**: Tendência positiva no médio prazo
-        - **Manter/Negativo**: Tendência negativa no médio prazo
-        - **Manter/Otimista**: Mercado lateral com viés positivo
-        - **Manter/Cauteloso**: Mercado lateral com viés negativo
-        - **Manter/Indefinido**: Tendência não clara, aguardar confirmação
+        **🎯 Como interpretar as sugestões:**
+        
+        - **📈 Compra - Tendência Forte**: As 3 médias móveis estão alinhadas para alta → **Momento favorável**
+        - **🟢 Compra - Tendência Positiva**: Curto prazo acima do médio prazo → **Oportunidade potencial**
+        - **📉 Venda - Tendência de Baixa**: As 3 médias móveis estão alinhadas para baixa → **Cautela necessária**
+        - **🔴 Venda - Tendência Negativa**: Curto prazo abaixo do médio prazo → **Considerar proteger ganhos**
+        - **⚪ Manter - Aguardar Confirmação**: Mercado sem direção clara → **Melhor esperar**
+        
+        💡 **Lembre-se**: Estas são ferramentas de apoio. Sempre faça sua própria análise!
         """)
 
 except Exception as e:
